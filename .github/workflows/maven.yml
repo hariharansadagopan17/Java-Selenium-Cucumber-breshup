@@ -57,8 +57,8 @@ jobs:
 
     
 
-    - name: Notify on Success
-      if: success()
+    - name: Notify on Success (PR)
+      if: success() && github.event_name == 'pull_request'
       uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -75,8 +75,19 @@ jobs:
             body: message
           });
 
-    - name: Notify on Failure
-      if: failure()
+    - name: Notify on Success (Push)
+      if: success() && github.event_name == 'push'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { repo, owner } = context.repo;
+          const run_id = context.runId;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          console.log(`✅ Pipeline succeeded!\nView run: ${run_url}`);
+
+    - name: Notify on Failure (PR)
+      if: failure() && github.event_name == 'pull_request'
       uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -92,3 +103,14 @@ jobs:
             issue_number: context.issue.number,
             body: message
           });
+
+    - name: Notify on Failure (Push)
+      if: failure() && github.event_name == 'push'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { repo, owner } = context.repo;
+          const run_id = context.runId;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          console.log(`❌ Pipeline failed!\nView run: ${run_url}`);
