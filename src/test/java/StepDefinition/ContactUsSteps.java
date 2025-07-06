@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+//import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.Assert.assertTrue;
 
 public class ContactUsSteps {
@@ -15,8 +15,9 @@ public class ContactUsSteps {
     public void i_am_on_the_contact_us_page() {
 
         // Setup WebDriver
-        ChromeOptions options = new ChromeOptions();
-        driver = new ChromeDriver(options);
+      //  ChromeOptions options = new ChromeOptions();
+        //driver = new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.get("https://jignect.tech/contact-us/");
     }

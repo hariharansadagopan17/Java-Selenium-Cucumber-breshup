@@ -41,7 +41,7 @@ jobs:
     
     - name: Archive test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: test-reports
         path: |
@@ -58,3 +58,39 @@ jobs:
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+
+    - name: Notify on Success
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { repo, owner } = context.repo;
+          const run_id = context.runId;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          const message = `✅ Pipeline succeeded!\nView run: ${run_url}`;
+          
+          await github.rest.issues.createComment({
+            owner: owner,
+            repo: repo,
+            issue_number: context.issue.number,
+            body: message
+          });
+
+    - name: Notify on Failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { repo, owner } = context.repo;
+          const run_id = context.runId;
+          const run_url = `https://github.com/${owner}/${repo}/actions/runs/${run_id}`;
+          const message = `❌ Pipeline failed!\nView run: ${run_url}`;
+          
+          await github.rest.issues.createComment({
+            owner: owner,
+            repo: repo,
+            issue_number: context.issue.number,
+            body: message
+          });
