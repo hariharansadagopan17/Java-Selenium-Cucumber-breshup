@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-//import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.Assert.assertTrue;
 
 public class ContactUsSteps {
@@ -13,11 +13,16 @@ public class ContactUsSteps {
 
     @Given("I am on the contact us page")
     public void i_am_on_the_contact_us_page() {
-
-        // Setup WebDriver
-      //  ChromeOptions options = new ChromeOptions();
-        //driver = new ChromeDriver(options);
-        WebDriver driver = new ChromeDriver();
+        // Setup ChromeOptions first
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--disable-extensions");
+        
+        // Create driver with options
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         driver.get("https://jignect.tech/contact-us/");
     }
